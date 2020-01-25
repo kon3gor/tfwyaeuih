@@ -10,17 +10,18 @@ local bullet_image
 local eye_image, eye_quads = nil, {}
 
 local globalTime = 0
+local frames = 0
 local radiusOfLevel = 150
 
 local world = bump.newWorld()
 
-local HEIGHT = 1280
-local WIDTH = 1024
+local WIDTH = 1280
+local HEIGHT = 1024
 local PLAYER_VELOCITY = 5
 local VELOCITY_DEC = 0.1
 
 function love.load()
-  love.window.setMode(HEIGHT, WIDTH)
+  love.window.setMode(WIDTH, HEIGHT)
   player.x  = 630
   player.y  = 630
   player.vx = 0
@@ -59,8 +60,9 @@ end
 
 function love.update(dt)
   globalTime = globalTime + dt
-  if 0.05555555555555556 >= math.random() then
-    local enemy = ctrs.new_enemy(math.random(HEIGHT), math.random(WIDTH), 200, globalTime, 'eye')
+  frames = frames + 1
+  if 0.005555555555555556 >= math.random() then
+    local enemy = ctrs.new_enemy(math.random(WIDTH), math.random(HEIGHT), 200, globalTime, 'eye')
     table.insert(enemies, enemy)
     world:add(enemy, enemy.x, enemy.y, 32, 32)
   end
@@ -94,7 +96,7 @@ function love.update(dt)
     player.lookDirection = 'right'
   end
 
-  if physics.inCircle(player, radiusOfLevel, HEIGHT, WIDTH) then
+  if physics.inCircle(player, radiusOfLevel, WIDTH, HEIGHT) then
     local actualX, actualY, cols, len = world:move(player, player.x + player.vx, player.y + player.vy)
     player.x = actualX
     player.y = actualY
@@ -108,7 +110,9 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.draw(background, HEIGHT/2-radiusOfLevel-10, WIDTH/2-radiusOfLevel-10)
+  -- Draw background
+  love.graphics.draw(background, WIDTH/2-radiusOfLevel-10, HEIGHT/2-radiusOfLevel-10)
+
   -- Draw Player
   love.graphics.setColor(1, 1, 1)
   love.graphics.draw(player.image, love.graphics.newQuad(0,0,32,32,player.image:getDimensions()), player.x-10, player.y-10)
@@ -120,7 +124,7 @@ function love.draw()
 
   -- Draw enemies
   for k, v in pairs(enemies) do
-    love.graphics.draw(eye_image, v.x, v.y)
+    love.graphics.draw(eye_image, eye_quads[math.floor(frames / 8) % 2 + 1], v.x, v.y)
   end
 
   -- Draw Hit Box
@@ -128,7 +132,7 @@ function love.draw()
   -- love.graphics.rectangle('fill', player.x, player.y, 13, 13)
   -- Draw circles
   love.graphics.setColor(0.5, 0.67, 0.25)
-  love.graphics.circle('line', HEIGHT/2, WIDTH/2, radiusOfLevel)
+  love.graphics.circle('line', WIDTH/2, HEIGHT/2, radiusOfLevel)
   love.graphics.print(player.health, 100, 100);
   love.graphics.print(globalTime, 100, 120);
 
