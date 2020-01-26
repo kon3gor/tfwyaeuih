@@ -30,10 +30,11 @@ function love.load()
   player.vy = 0
   player.h  = 13
   player.w  = 13
-  player.health = 7
+  player.pHealth = 7
   player.lastHitTime = 0
-  player.lookDirection = ''
+  player.lookDirection = 'down'
   player.isMoving = false
+  player.mainWeapon = {sx = 0, sy = 0, ex = 0, ey = 0}
   world:add(player, player.x, player.y, player.w, player.h)
 
   player.image = love.graphics.newImage('res/sprite_sheet.png')
@@ -75,8 +76,8 @@ function love.update(dt)
     v.x = actualX
     v.y = actualY
     for i = 1, len do
-      if cols[i].other.health then
-        cols[i].other.health = cols[i].other.health - 1
+      if cols[i].other.pHealth then
+        cols[i].other.pHealth = cols[i].other.pHealth - 1
         world:remove(v)
         table.remove(bullets, k)
       end
@@ -111,18 +112,7 @@ function love.update(dt)
   end
 
   if love.keyboard.isDown('z') then
-    if player.lookDirection == 'up' then
-      
-    end
-    if player.lookDirection == 'down' then
-      
-    end
-    if player.lookDirection == 'right' then
-      
-    end
-    if player.lookDirection == 'left' then
-      
-    end
+    local items, len = world:querySegment(player.weapon.sx, player.weapon.sy, player.weapon.ex, player.weapon.ey)
   end
 
   if physics.inCircle(player, radiusOfLevel, WIDTH, HEIGHT) then
@@ -163,8 +153,7 @@ function love.draw()
   -- Draw circles
   love.graphics.setColor(0.5, 0.67, 0.25)
   love.graphics.circle('line', WIDTH/2, HEIGHT/2, radiusOfLevel)
-  love.graphics.print(player.health, 100, 100);
-  love.graphics.print(globalTime, 100, 120);
+  love.graphics.print(player.pHealth, 100, 100);
 
   love.graphics.setColor(1, 1, 1, 0.5)
   if love.keyboard.isDown('z') then
