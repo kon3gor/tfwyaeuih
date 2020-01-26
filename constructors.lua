@@ -4,8 +4,8 @@ function ctrs.new_bullet(x, y, px, py)
   local bullet = {}
   bullet.x = x
   bullet.y = y
-  bullet.vy = -((y - py) / math.sqrt((x-px)*(x-px) + (y-py)*(y-py)))
   bullet.vx = -((x - px) / math.sqrt((x-px)*(x-px) + (y-py)*(y-py)))
+  bullet.vy = -((y - py) / math.sqrt((x-px)*(x-px) + (y-py)*(y-py)))
   return bullet
 end
 

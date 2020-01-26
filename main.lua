@@ -1,6 +1,7 @@
 local bump = require 'bump'
 local physics = require 'physics'
 local ctrs = require 'constructors'
+local utils = require 'utils'
 local player = {}
 local enemies = {}
 local bullets = {}
@@ -18,7 +19,7 @@ local world = bump.newWorld()
 local WIDTH = 1280
 local HEIGHT = 1024
 local PLAYER_VELOCITY = 5
-local VELOCITY_DEC = 0.1
+local VELOCITY_DEC = 0.4
 
 function love.load()
   love.window.setMode(WIDTH, HEIGHT)
@@ -61,7 +62,7 @@ end
 function love.update(dt)
   globalTime = globalTime + dt
   frames = frames + 1
-  if 0.005555555555555556 >= math.random() then
+  if 0.0056 >= math.random() and #enemies < 5 then
     local enemy = ctrs.new_enemy(math.random(WIDTH), math.random(HEIGHT), 200, globalTime, 'eye')
     table.insert(enemies, enemy)
     world:add(enemy, enemy.x, enemy.y, 32, 32)
@@ -76,6 +77,16 @@ function love.update(dt)
         world:remove(v)
         table.remove(bullets, k)
       end
+    end
+  end
+
+  for k, v in pairs(enemies) do
+    local rndnum = function () return math.random(-20, 20) end
+    local newX, newY = utils.approximate(v.x,v.y, player.x+rndnum(), player.y+rndnum(), PLAYER_VELOCITY/2)
+    local actualX, actualY, cols, len = world:move(v, newY, newX)
+    if len == 0 then
+      v.x = actualX
+      v.y = actualY
     end
   end
 
@@ -105,8 +116,8 @@ function love.update(dt)
 
   player.vx = player.vx + VELOCITY_DEC * (player.vx > 0 and -1 or 1)
   player.vy = player.vy + VELOCITY_DEC * (player.vy > 0 and -1 or 1)
-  if math.abs(player.vx) <= 0.35 then player.vx = 0 end
-  if math.abs(player.vy) <= 0.35 then player.vy = 0 end
+  if math.abs(player.vx) <= 0.65 then player.vx = 0 end
+  if math.abs(player.vy) <= 0.65 then player.vy = 0 end
 end
 
 function love.draw()
