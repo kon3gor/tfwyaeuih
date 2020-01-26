@@ -12,6 +12,10 @@ local background
 local bullet_image
 local eye_image, eye_quads = nil, {}
 local level1music
+local play_text
+local title
+local wings_image
+local demon_image
 
 local globalTime = 0
 local frames = 0
@@ -21,7 +25,7 @@ local frames = 0
 -- 2 -- game over
 local globalState = 0
 
-local world = bump.newWorld()
+local world
 
 local WIDTH = 1280
 local HEIGHT = 1024
@@ -30,28 +34,19 @@ local VELOCITY_DEC = 0.4
 local COOLDOWN = 1.0
 
 function love.load()
+  love.window.setFullscreen(true)
   math.randomseed(os.time())
   love.window.setMode(WIDTH, HEIGHT)
-  player.x  = 630
-  player.y  = 630
-  player.vx = 0
-  player.vy = 0
-  player.h  = 13
-  player.w  = 13
-  player.pHealth = 7
-  player.lastHitTime = 0
-  player.lookDirection = 'down'
-  player.isMoving = false
-  player.name = 'player'
-  player.killCounter = 0
-  player.mainWeapon = {sx = 0, sy = 0, ex = 0, ey = 0}
-  world:add(player, player.x, player.y, player.w, player.h)
 
   player.image = love.graphics.newImage('res/sprite_sheet.png')
   bullet_image = love.graphics.newImage('res/fireball.png')
   background   = love.graphics.newImage('res/1level_background.png')
   eye_image    = love.graphics.newImage('res/eye_sheet.png')
   health_image = love.graphics.newImage('res/health.png')
+  play_text    = love.graphics.newImage('res/play.png')
+  title        = love.graphics.newImage('res/title.png')
+  wings_image  = love.graphics.newImage('res/wings.png')
+  demon_image  = love.graphics.newImage('res/demon.png')
 
   level1music = love.audio.newSource('res/level1.mp3', 'stream')
   level1music:setLooping(true)
@@ -59,27 +54,35 @@ function love.load()
   for x = 0, 64, 32 do
     table.insert(eye_quads, love.graphics.newQuad(x, 0, 32, 32, eye_image:getDimensions()))
   end
-
-  table.insert(bullets, ctrs.new_bullet(900, 100, player.x, player.y))
-  table.insert(bullets, ctrs.new_bullet(100, 900, player.x, player.y))
-  table.insert(bullets, ctrs.new_bullet(900, 900, player.x, player.y))
-  table.insert(bullets, ctrs.new_bullet(100, 100, player.x, player.y))
-  for k, v in pairs(bullets) do
-    world:add(v, v.x, v.y, 8, 8)
-    -- print(tostring(k) .. ': ' .. tostring(v))
-  end
 end
 
 function love.update(dt)
   if globalState == 0 then
     if love.keyboard.isDown('1') then
+      world = bump.newWorld()
       globalState = 1
       love.audio.play(level1music)
+      player.x  = 630
+      player.y  = 630
+      player.vx = 0
+      player.vy = 0
+      player.h  = 13
+      player.w  = 13
+      player.pHealth = 7
+      player.lastHitTime = 0
+      player.lookDirection = 'down'
+      player.isMoving = false
+      player.name = 'player'
+      player.killCounter = 0
+      player.mainWeapon = {sx = 0, sy = 0, ex = 0, ey = 0}
+      enemies = {}
+      bullets = {}
+      world:add(player, player.x, player.y, player.w, player.h)
     end
   elseif globalState == 1 then
     globalTime = globalTime + dt
     frames = frames + 1
-    if 0.0056 >= math.random() and #enemies < config.levelProperties[level].maximumEnemies then
+    if 0.01 >= math.random() and #enemies < config.levelProperties[level].maximumEnemies then
       print("New Enemy!")
       local enemy = ctrs.new_enemy(math.random(WIDTH), math.random(HEIGHT), 40, globalTime, 'eye'..tostring(math.random()))
       table.insert(enemies, enemy)
@@ -115,7 +118,7 @@ function love.update(dt)
           end
         end
       end
-      if globalTime - v.lastShooted >= COOLDOWN and 0.0625 >= math.random() then
+      if globalTime - v.lastShooted >= COOLDOWN and (1/30) >= math.random() then
         v.lastShooted = globalTime
         local new_bullet = ctrs.new_bullet(v.x, v.y, player.x, player.y)
         table.insert(bullets, new_bullet)
@@ -177,18 +180,25 @@ function love.update(dt)
     player.isMoving = player.vx == 0 and player.vy == 0
 
     if player.pHealth <= 0 then
-      globalState = 2
+      globalState = 0
+      love.audio.stop(level1music)
     end
     if player.killCounter >= config.levelProperties[level].kills then
       level = level + 1
       player.killCounter = 0
+      player.pHealth = 7
     end
   end
 end
 
 function love.draw()
   if globalState == 0 then
-    love.graphics.print("Press space")
+    love.graphics.setColor(1,1,1)
+    love.graphics.draw(play_text, (HEIGHT-300)/2, 700)  
+    love.graphics.draw(title, (HEIGHT - 300)/2, 200)  
+         
+    love.graphics.draw(wings_image, 0,    10, 0, 0.5, 0.5)  
+    love.graphics.draw(demon_image, 1000, 70, 0, 0.7, 0.7)  
   elseif globalState == 1 then
     -- Draw background
     local radiusOfLevel = config.levelProperties[level].radius
@@ -215,9 +225,6 @@ function love.draw()
       love.graphics.draw(eye_image, eye_quads[math.floor(frames / 8) % 2 + 1], v.x, v.y)
     end
 
-    -- Draw Hit Box
-    -- love.graphics.setColor(0.5, 1, 0.25)
-    -- love.graphics.rectangle('fill', player.x, player.y, 13, 13)
     -- Draw circles
     love.graphics.setColor(0.5, 0.67, 0.25)
     love.graphics.circle('line', WIDTH/2, HEIGHT/2, radiusOfLevel)
@@ -229,7 +236,8 @@ function love.draw()
     for i = player.pHealth, 6 do
       love.graphics.draw(health_image, love.graphics.newQuad(555, 0, 37, 37, health_image:getDimensions()), 140 + 40 * i, 100)
     end
-    -- love.graphics.print(player.lastHitTime, 100, 120);
+
+    love.graphics.print(player.killCounter .. '/' .. config.levelProperties[level].kills, 140, 160)
 
     love.graphics.setColor(1, 1, 1, 0.5)
     if love.keyboard.isDown('n') then
