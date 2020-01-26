@@ -31,8 +31,9 @@ function love.load()
   player.h  = 13
   player.w  = 13
   player.health = 7
-  player.lastHitTime = 0;
-  player.lookDirection = '';
+  player.lastHitTime = 0
+  player.lookDirection = ''
+  player.isMoving = false
   world:add(player, player.x, player.y, player.w, player.h)
 
   player.image = love.graphics.newImage('res/sprite_sheet.png')
@@ -109,6 +110,21 @@ function love.update(dt)
     player.lookDirection = 'right'
   end
 
+  if love.keyboard.isDown('z') then
+    if player.lookDirection == 'up' then
+      
+    end
+    if player.lookDirection == 'down' then
+      
+    end
+    if player.lookDirection == 'right' then
+      
+    end
+    if player.lookDirection == 'left' then
+      
+    end
+  end
+
   if physics.inCircle(player, radiusOfLevel, WIDTH, HEIGHT) then
     local actualX, actualY, cols, len = world:move(player, player.x + player.vx, player.y + player.vy)
     player.x = actualX
@@ -120,6 +136,7 @@ function love.update(dt)
   player.vy = player.vy + VELOCITY_DEC * (player.vy > 0 and -1 or 1)
   if math.abs(player.vx) <= 0.65 then player.vx = 0 end
   if math.abs(player.vy) <= 0.65 then player.vy = 0 end
+  player.isMoving = player.vx == 0 and player.vy == 0
 end
 
 function love.draw()
