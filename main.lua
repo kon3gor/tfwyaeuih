@@ -76,6 +76,7 @@ function love.update(dt)
       player.killCounter = 0
       player.startSpell = 0
       player.mainWeapon = {sx = 0, sy = 0, ex = 0, ey = 0}
+      level = 1
       enemies = {}
       bullets = {}
       world:add(player, player.x, player.y, player.w, player.h)
