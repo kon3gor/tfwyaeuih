@@ -32,7 +32,7 @@ function love.load()
   player.w  = 13
   player.health = 7
   player.lastHitTime = 0
-  player.lookDirection = ''
+  player.lookDirection = 'down'
   player.isMoving = false
   world:add(player, player.x, player.y, player.w, player.h)
 
@@ -147,11 +147,12 @@ function love.draw()
   love.graphics.setColor(1, 1, 1)
   -- player.lookDirection {up, down, left, right}
   local row = {down=0, up=1, right=2, left=3}
-  
-  if player.isMoving then
-    love.graphics.draw(player.image, love.graphics.newQuad(row[player.lookDirection] * 32,((frames / 8) % 2 + 1) * 32,32,32,player.image:getDimensions()), player.x-10, player.y-10)
+  local direction = row[player.lookDirection] * 32
+  if not player.isMoving then
+    local playerframe = (math.floor((frames + 4) / 8) % 2 + 1) * 32
+    love.graphics.draw(player.image, love.graphics.newQuad(playerframe,direction,32,32,player.image:getDimensions()), player.x-10, player.y-10)
   else
-    love.graphics.draw(player.image, love.graphics.newQuad(row[player.lookDirection] * 32,0,32,32,player.image:getDimensions()), player.x-10, player.y-10)
+    love.graphics.draw(player.image, love.graphics.newQuad(0,direction,32,32,player.image:getDimensions()), player.x-10, player.y-10)
   end
   -- Draw bullets
   for k, v in pairs(bullets) do
