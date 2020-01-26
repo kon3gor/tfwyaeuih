@@ -6,6 +6,7 @@ function ctrs.new_bullet(x, y, px, py)
   bullet.y = y
   bullet.vx = -((x - px) / math.sqrt((x-px)*(x-px) + (y-py)*(y-py)))
   bullet.vy = -((y - py) / math.sqrt((x-px)*(x-px) + (y-py)*(y-py)))
+  bullet.name = 'bullet'
   return bullet
 end
 
@@ -16,7 +17,7 @@ function ctrs.new_enemy(x, y, health, currentTime, name)
   enemy.w = 16
   enemy.h = 16
   enemy.health = health
-  enemy.lastShooted = 0
+  enemy.lastShooted = currentTime
   enemy.name = name
   return enemy
 end
