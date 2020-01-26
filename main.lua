@@ -43,6 +43,7 @@ function love.load()
   bullet_image = love.graphics.newImage('res/fireball.png')
   background   = love.graphics.newImage('res/1level_background.png')
   eye_image    = love.graphics.newImage('res/eye_sheet.png')
+  health_image = love.graphics.newImage('res/health.png')
 
   for x = 0, 64, 32 do
     table.insert(eye_quads, love.graphics.newQuad(x, 0, 32, 32, eye_image:getDimensions()))
@@ -192,8 +193,15 @@ function love.draw()
   -- Draw circles
   love.graphics.setColor(0.5, 0.67, 0.25)
   love.graphics.circle('line', WIDTH/2, HEIGHT/2, radiusOfLevel)
-  love.graphics.print(player.pHealth, 100, 100);
-  love.graphics.print(player.lastHitTime, 100, 120);
+  -- love.graphics.print(player.pHealth, 100, 100);
+  love.graphics.setColor(1,1,1)
+  for i = 1, player.pHealth do
+    love.graphics.draw(health_image, love.graphics.newQuad(0, 0, 37, 37, health_image:getDimensions()), 100 + 40 * i, 100)
+end
+  for i = player.pHealth, 6 do
+    love.graphics.draw(health_image, love.graphics.newQuad(555, 0, 37, 37, health_image:getDimensions()), 140 + 40 * i, 100)
+  end
+  -- love.graphics.print(player.lastHitTime, 100, 120);
 
   love.graphics.setColor(1, 1, 1, 0.5)
   if love.keyboard.isDown('n') then
