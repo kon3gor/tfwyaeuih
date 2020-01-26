@@ -126,24 +126,24 @@ function love.update(dt)
       end
     end
 
-    if love.keyboard.isDown('up') then
+    if love.keyboard.isDown('w') then
       player.vy = -PLAYER_VELOCITY
       player.lookDirection = 'up'
     end
-    if love.keyboard.isDown('down') then
+    if love.keyboard.isDown('s') then
       player.vy = PLAYER_VELOCITY
       player.lookDirection = 'down'
     end
-    if love.keyboard.isDown('left') then
+    if love.keyboard.isDown('a') then
       player.vx = -PLAYER_VELOCITY
       player.lookDirection = 'left'
     end
-    if love.keyboard.isDown('right') then
+    if love.keyboard.isDown('d') then
       player.vx = PLAYER_VELOCITY
       player.lookDirection = 'right'
     end
 
-    if love.keyboard.isDown('n') then
+    if love.keyboard.isDown('u') or love.keyboard.isDown('7') then
       local items,len = world:querySegment( player.mainWeapon.sx, player.mainWeapon.sy
                                           , player.mainWeapon.ex, player.mainWeapon.ey
                                           , function (other) 
@@ -151,7 +151,7 @@ function love.update(dt)
                                             end
                                           )
       if (len >= 1) then
-        print(items[1].name .. ' ' .. items[1].health)
+        -- print(items[1].name .. ' ' .. items[1].health)
         for i = 1, len do
           items[i].health = items[i].health - 1
           local ind = 0
@@ -240,7 +240,7 @@ function love.draw()
     love.graphics.print(player.killCounter .. '/' .. config.levelProperties[level].kills, 140, 160)
 
     love.graphics.setColor(1, 1, 1, 0.5)
-    if love.keyboard.isDown('n') then
+    if love.keyboard.isDown('u') or love.keyboard.isDown('7') then
       if player.lookDirection == 'up' then
         love.graphics.rectangle('fill', player.x, 0, 10, player.y)
         utils.changeMainWeapon(player, player.x, 0, player.x + 10, player.y)
