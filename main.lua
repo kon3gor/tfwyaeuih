@@ -135,8 +135,15 @@ function love.draw()
 
   -- Draw Player
   love.graphics.setColor(1, 1, 1)
-  love.graphics.draw(player.image, love.graphics.newQuad(0,0,32,32,player.image:getDimensions()), player.x-10, player.y-10)
-
+  -- player.lookDirection {up, down, left, right}
+  local row = {down=0, up=1, right=2, left=3}
+  local direction = row[player.lookDirection] * 32
+  if not player.isMoving then
+    local playerframe = (math.floor((frames + 4) / 8) % 2 + 1) * 32
+    love.graphics.draw(player.image, love.graphics.newQuad(playerframe,direction,32,32,player.image:getDimensions()), player.x-10, player.y-10)
+  else
+    love.graphics.draw(player.image, love.graphics.newQuad(0,direction,32,32,player.image:getDimensions()), player.x-10, player.y-10)
+  end
   -- Draw bullets
   for k, v in pairs(bullets) do
     love.graphics.draw(bullet_image, v.x, v.y)
