@@ -74,6 +74,7 @@ function love.update(dt)
       player.isMoving = false
       player.name = 'player'
       player.killCounter = 0
+      player.startSpell = 0
       player.mainWeapon = {sx = 0, sy = 0, ex = 0, ey = 0}
       enemies = {}
       bullets = {}
@@ -141,6 +142,24 @@ function love.update(dt)
     if love.keyboard.isDown('d') then
       player.vx = PLAYER_VELOCITY
       player.lookDirection = 'right'
+    end
+
+    if love.keyboard.isDown('y') then
+      if player.startSpell == 0 then player.startSpell = globalTime end
+      if globalTime - player.startSpell >= config.spells.y.duration then
+        for k, v in pairs(enemies) do world:remove(v) end
+        enemies = {}        
+      end
+    end
+    if love.keyboard.isDown('6') then
+      if player.startSpell == 0 then player.startSpell = globalTime end
+      if globalTime - player.startSpell >= config.spells["6"].duration then
+        for k, v in pairs(bullets) do world:remove(v) end
+        bullets = {}        
+      end
+    end
+    if not love.keyboard.isDown('y', '6') then
+      player.startSpell = 0
     end
 
     if love.keyboard.isDown('u') or love.keyboard.isDown('7') then

@@ -10,4 +10,9 @@ config.levelProperties = {
   {radius = 240, kills = 55, maximumEnemies = 11},
   {radius = 260, kills = 70, maximumEnemies = 12},
 }
+
+config.spells = {
+  ["y"] = {name = "KTD", description = "killall enemies", duration = 3},
+  ["6"] = {name = "KTB", description = "killall bullets", duration = 2}
+}
 return config
