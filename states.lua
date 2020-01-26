@@ -49,7 +49,8 @@ function states.UpdateMenu()
   for k, v in pairs(wings) do  
     v.Y = v.Y + 1  
     if v.Y == (WIDTH - 50) then  
-      v.Y = -300                                                                                                                                         end                                     
+      v.Y = -300
+    end                                     
   end
                                                
   for k, v in pairs(demons) do  

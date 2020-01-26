@@ -22,6 +22,7 @@ local PLAYER_VELOCITY = 5
 local VELOCITY_DEC = 0.4
 
 function love.load()
+  math.randomseed(os.time())
   love.window.setMode(WIDTH, HEIGHT)
   player.x  = 630
   player.y  = 630
@@ -63,6 +64,7 @@ function love.update(dt)
   globalTime = globalTime + dt
   frames = frames + 1
   if 0.0056 >= math.random() and #enemies < 5 then
+    print("New Enemy!")
     local enemy = ctrs.new_enemy(math.random(WIDTH), math.random(HEIGHT), 200, globalTime, 'eye')
     table.insert(enemies, enemy)
     world:add(enemy, enemy.x, enemy.y, 32, 32)
@@ -82,7 +84,7 @@ function love.update(dt)
 
   for k, v in pairs(enemies) do
     local rndnum = function () return math.random(-20, 20) end
-    local newX, newY = utils.approximate(v.x,v.y, player.x+rndnum(), player.y+rndnum(), PLAYER_VELOCITY/2)
+    local newX, newY = utils.approximate(v.x,v.y, player.x+rndnum(), player.y+rndnum(), 1)
     local actualX, actualY, cols, len = world:move(v, newY, newX)
     if len == 0 then
       v.x = actualX
